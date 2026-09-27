@@ -6,5 +6,5 @@ edition = "2018"
 rust-version = "1.87"
 
 [dependencies]
-blitzkit = "0.7"
+blitzkit = "0.8"
 glam = "0.33"
