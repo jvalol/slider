@@ -144,7 +144,9 @@ mod tests {
     fn flying_down_the_middle_takes_nothing() {
         // if the middle took any of them, that ring would need no steering,
         // and the one thing this game asks of you is steering
-        let taken = (0..COUNT).filter(|index| ring(*index).takes(Vec2::ZERO)).count();
+        let taken = (0..COUNT)
+            .filter(|index| ring(*index).takes(Vec2::ZERO))
+            .count();
 
         assert_eq!(taken, 0, "{} of {} need no steering", taken, COUNT);
     }

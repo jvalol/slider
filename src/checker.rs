@@ -88,14 +88,24 @@ mod tests {
         assert_ne!(is_light(0, 0), is_light(SQUARE, 0));
         assert_ne!(is_light(0, 0), is_light(0, SQUARE));
         assert_eq!(is_light(0, 0), is_light(SQUARE, SQUARE));
-        assert_eq!(is_light(0, 0), is_light(SQUARE * 2, 0), "it is not alternating");
+        assert_eq!(
+            is_light(0, 0),
+            is_light(SQUARE * 2, 0),
+            "it is not alternating"
+        );
     }
 
     #[test]
     fn a_square_is_all_one_color() {
         for y in 0..SQUARE {
             for x in 0..SQUARE {
-                assert_eq!(is_light(x, y), is_light(0, 0), "{} {} broke the square", x, y);
+                assert_eq!(
+                    is_light(x, y),
+                    is_light(0, 0),
+                    "{} {} broke the square",
+                    x,
+                    y
+                );
             }
         }
     }

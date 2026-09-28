@@ -66,21 +66,24 @@ impl SliderGame {
 
         if self.run.phase == Phase::Finished {
             text_renderer.push_render_text(line(
-                format!("{} of {} rings in {:.1}s", self.run.taken, COUNT, self.run.time),
+                format!(
+                    "{} of {} rings in {:.1}s",
+                    self.run.taken, COUNT, self.run.time
+                ),
                 20.0,
                 24.0,
                 white,
             ));
-            text_renderer.push_render_text(line(
-                String::from("r to go again"),
-                52.0,
-                14.0,
-                white,
-            ));
+            text_renderer.push_render_text(line(String::from("r to go again"), 52.0, 14.0, white));
             return;
         }
 
-        text_renderer.push_render_text(line(format!("{:.0} m/s", self.ship.speed), 20.0, 24.0, white));
+        text_renderer.push_render_text(line(
+            format!("{:.0} m/s", self.ship.speed),
+            20.0,
+            24.0,
+            white,
+        ));
         text_renderer.push_render_text(line(
             format!(
                 "{} of {} rings   {:.0} of {:.0} m{}",
@@ -88,7 +91,11 @@ impl SliderGame {
                 COUNT,
                 self.ship.along * tunnel::LENGTH,
                 tunnel::LENGTH,
-                if self.ship.scraping { "   scraping" } else { "" }
+                if self.ship.scraping {
+                    "   scraping"
+                } else {
+                    ""
+                }
             ),
             52.0,
             14.0,

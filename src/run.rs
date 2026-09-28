@@ -124,7 +124,11 @@ mod tests {
         let (run, _) = run_through(|_| Vec2::ZERO);
 
         assert_eq!(run.taken + run.missed, COUNT, "some ring went unjudged");
-        assert!(run.missed > run.taken, "the middle took {} of them", run.taken);
+        assert!(
+            run.missed > run.taken,
+            "the middle took {} of them",
+            run.taken
+        );
     }
 
     #[test]

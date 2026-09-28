@@ -183,7 +183,10 @@ mod tests {
 
         assert!(scraped.scraping);
         assert!(scraped.speed < clean, "scraping was free");
-        assert!(scraped.speed >= SCRAPED_SPEED - 1e-4, "it was ground to a halt");
+        assert!(
+            scraped.speed >= SCRAPED_SPEED - 1e-4,
+            "it was ground to a halt"
+        );
     }
 
     #[test]

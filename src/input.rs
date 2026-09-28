@@ -98,7 +98,10 @@ mod tests {
     #[test]
     fn a_click_with_the_cursor_loose_asks_for_the_cursor() {
         let mut input = Input::new();
-        input.mouse(MouseInput::new(MouseButton::Left, ButtonState::Pressed), false);
+        input.mouse(
+            MouseInput::new(MouseButton::Left, ButtonState::Pressed),
+            false,
+        );
 
         assert!(input.grab_cursor);
     }
@@ -106,7 +109,10 @@ mod tests {
     #[test]
     fn a_click_with_the_cursor_held_does_nothing() {
         let mut input = Input::new();
-        input.mouse(MouseInput::new(MouseButton::Left, ButtonState::Pressed), true);
+        input.mouse(
+            MouseInput::new(MouseButton::Left, ButtonState::Pressed),
+            true,
+        );
 
         assert!(!input.grab_cursor);
     }

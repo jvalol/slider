@@ -1,9 +1,9 @@
 //! The tunnel: where its middle runs, which way is up inside it, and where its
 //! wall is. See `specs/0001-the-tunnel.md`.
 
-use glam::{vec3, Vec2, Vec3};
 #[cfg(test)]
 use glam::Vec3Swizzles;
+use glam::{vec3, Vec2, Vec3};
 
 /// How long the tunnel is, end to end.
 pub const LENGTH: f32 = 900.0;
@@ -114,10 +114,23 @@ mod tests {
             let (across, up) = frame(along);
 
             for (name, vector) in [("across", across), ("up", up)] {
-                assert!((vector.length() - 1.0).abs() < 1e-4, "{} at {}", name, along);
-                assert!(vector.dot(ahead).abs() < 1e-4, "{} leans down the tunnel", name);
+                assert!(
+                    (vector.length() - 1.0).abs() < 1e-4,
+                    "{} at {}",
+                    name,
+                    along
+                );
+                assert!(
+                    vector.dot(ahead).abs() < 1e-4,
+                    "{} leans down the tunnel",
+                    name
+                );
             }
-            assert!(across.dot(up).abs() < 1e-4, "the frame is not square at {}", along);
+            assert!(
+                across.dot(up).abs() < 1e-4,
+                "the frame is not square at {}",
+                along
+            );
         }
     }
 
@@ -130,7 +143,12 @@ mod tests {
                 let around = turn as f32 / 16.0;
                 let out = wall(along, around) - spine(along);
 
-                assert!((out.length() - RADIUS).abs() < 1e-3, "at {} {}", along, around);
+                assert!(
+                    (out.length() - RADIUS).abs() < 1e-3,
+                    "at {} {}",
+                    along,
+                    around
+                );
                 // and square to the tunnel, so the wall is a tube rather than
                 // a sheared one
                 assert!(out.dot(heading(along)).abs() < 1e-3);
