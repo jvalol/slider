@@ -2,7 +2,7 @@
 
 Fly down a tunnel that wanders, through fourteen rings strung along it. You
 speed up the further you get, from 22 metres a second to 70. Scraping the wall
-costs you, missing a ring costs you, and both cost you the same way: time.
+slows you down, and so does missing a ring.
 
 Built on [blitzkit](https://github.com/jvalol/blitzkit), the fifth game on that
 engine and the second in 3D.
