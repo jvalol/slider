@@ -42,15 +42,31 @@ Behavior changes are spec driven:
 - `src/checker.rs` — the wall's checker, built rather than loaded. No image
   files travel with this game.
 
-## Where it came from
+## The tunnel, and the other thing built on it
 
-It began as `blitzkit/examples/tunnel.rs`, which is still there and still worth
-running: it is the hand-check for spec 0016's two-sided geometry and spec 0011's
-mipmaps. This is the same idea with the game around it and the maths under test.
+`blitzkit/examples/tunnel.rs` builds the same tunnel this does. Not an ancestor
+of it: a sibling. Both build a wandering tube with rings in it, and neither is
+derived from the other.
 
-The two share about thirty lines of tube formula and are free to drift apart.
-The example should stay the smallest thing that demonstrates the engine; this
-one can grow.
+They cannot share a line of code. This game takes blitzkit from crates.io the
+way anyone else would, and the tunnel is not in the engine: it is not a shape in
+`blitzkit-shapes` either, because that is `publish = false` and so out of reach
+from out here. So the thirty lines of tube formula are written twice on purpose,
+and `check-tunnel` in the project folder is the only thing holding the two sets
+of numbers together.
+
+They answer different questions, which is why both exist:
+
+- The example asks whether an engine feature works. It is the hand-check for
+  spec 0016's two-sided geometry and spec 0011's mipmaps, and it has to stay the
+  smallest thing that shows them, so that a failure points at the engine rather
+  than at whatever else was built around it.
+- This asks whether the published engine is usable by someone outside it. Seven
+  modules, its own specs, its own tests, and it is free to grow, which the
+  example specifically is not.
+
+Delete the example and specs 0016 and 0011 have nothing to run. Delete this and
+nothing checks that the crate on crates.io works for a stranger.
 
 Writing the tests here found three bugs that had already shipped in that
 example: three rings embedded in the tunnel wall, a quarter of the tunnel that
