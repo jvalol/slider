@@ -17,3 +17,7 @@ The tunnel shares its shape and its numbers with blitzkit's `tunnel` example.
 Neither repo can see the other, so `check-tunnel` in the project folder is the
 only place the two are held to the same story. Changing a number in 0001 means
 running it.
+
+---
+
+I asked AI to draft this for me. I've edited it. Any surviving AI smells are my oversight.
