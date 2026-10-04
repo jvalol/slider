@@ -33,11 +33,33 @@ pub struct SliderGame {
     tube: Option<MeshId>,
     ring: Option<MeshId>,
     checker: Option<TextureId>,
+    /// Whether this run is only here to be photographed, and how long it has
+    /// been flying. See `refresh-screenshots` in the project above.
+    ///
+    /// The opening frame is the mouth of the tunnel, straight and empty. The
+    /// picture wants to be inside it, far enough in for the tunnel to be
+    /// bending and for a ring to be hanging in the middle distance.
+    staged: bool,
+    flown: f32,
 }
 
 impl SliderGame {
+    /// How far in the staged shot is taken, in seconds of flying.
+    ///
+    /// Ring n sits at (n + 1) of fifteen along the nine hundred metres, so
+    /// stopping anywhere puts one either just behind or a long way ahead.
+    /// Three seconds was seventy metres, inside the tunnel and short of the
+    /// first bend. Eleven was two hundred and forty six, which is three metres
+    /// past the fourth ring and looking at nothing.
+    ///
+    /// This is about two hundred and seventy five: the tunnel is bending and
+    /// the ring at three hundred is hanging ahead.
+    const FLOWN_FOR: f32 = 12.3;
+
     pub fn new() -> Self {
         Self {
+            staged: crate::staged(),
+            flown: 0.0,
             run: Run::new(),
             ship: Ship::new(),
             input: Input::new(),
@@ -179,7 +201,24 @@ impl Game for SliderGame {
         text_renderer: &mut TextRenderer,
         _sound_system: &SoundSystem,
     ) {
-        let dt = dt.min(MAX_DELTA_TIME);
+        let mut dt = dt.min(MAX_DELTA_TIME);
+
+        // flies itself in far enough for the tunnel to be bending and a ring
+        // to be hanging ahead, then holds still by having no more time pass
+        //
+        // All of it on the first frame rather than over eleven real seconds,
+        // because the shutter is on a timer and will not wait for the view.
+        if self.staged {
+            if self.flown == 0.0 {
+                let step = 1.0 / 60.0;
+                while self.flown < Self::FLOWN_FOR && self.run.is_flying() {
+                    let was = self.ship.update(self.input.steer, step);
+                    self.run.tick(step, was, &mut self.ship);
+                    self.flown += step;
+                }
+            }
+            dt = 0.0;
+        }
 
         if self.input.toggle_cursor {
             self.want_cursor_locked = !self.cursor_locked;
