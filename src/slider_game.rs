@@ -5,6 +5,7 @@ use blitzkit::geometry::Geometry;
 use blitzkit::keyboard::KeyboardInput;
 use blitzkit::mesh::{MeshData, Transform};
 use blitzkit::mouse::MouseInput;
+use blitzkit::notice;
 use blitzkit::renderer::render_text::{RenderText, TextRenderer};
 use blitzkit::renderer::scene::{MeshId, Scene, TextureId};
 use blitzkit::renderer::Renderer;
@@ -76,7 +77,7 @@ impl SliderGame {
         self.ship = Ship::new();
     }
 
-    fn draw_text(&self, text_renderer: &mut TextRenderer) {
+    fn draw_text(&self, geometry: &mut Geometry, text_renderer: &mut TextRenderer) {
         let line = |text: String, y: f32, size: f32, color: Vec4| RenderText {
             position: vec2(20.0, y),
             color,
@@ -86,8 +87,10 @@ impl SliderGame {
         };
         let white = vec4(1.0, 1.0, 1.0, 1.0);
 
+        let mut lines: Vec<RenderText> = Vec::new();
+
         if self.run.phase == Phase::Finished {
-            text_renderer.push_render_text(line(
+            lines.push(line(
                 format!(
                     "{} of {} rings in {:.1}s",
                     self.run.taken, COUNT, self.run.time
@@ -96,17 +99,18 @@ impl SliderGame {
                 24.0,
                 white,
             ));
-            text_renderer.push_render_text(line(String::from("r to go again"), 52.0, 14.0, white));
+            lines.push(line(String::from("r to go again"), 52.0, 14.0, white));
+            self.frame(geometry, text_renderer, lines);
             return;
         }
 
-        text_renderer.push_render_text(line(
+        lines.push(line(
             format!("{:.0} m/s", self.ship.speed),
             20.0,
             24.0,
             white,
         ));
-        text_renderer.push_render_text(line(
+        lines.push(line(
             format!(
                 "{} of {} rings   {:.0} of {:.0} m{}",
                 self.run.taken,
@@ -129,12 +133,36 @@ impl SliderGame {
         ));
 
         if !self.cursor_locked {
-            text_renderer.push_render_text(line(
+            lines.push(line(
                 String::from("click to take hold of the cursor, then steer with the mouse"),
                 76.0,
                 14.0,
                 vec4(0.7, 0.7, 0.75, 1.0),
             ));
+        }
+
+        self.frame(geometry, text_renderer, lines);
+    }
+
+    /// The readout on a panel, so it reads over the tunnel rather than into it.
+    /// See blitzkit's spec 0038.
+    fn frame(
+        &self,
+        geometry: &mut Geometry,
+        text_renderer: &mut TextRenderer,
+        lines: Vec<RenderText>,
+    ) {
+        // nothing else here draws in 2D, and the engine does not clear this
+        // between frames
+        geometry.reset();
+        if let Some(frame) = notice::framing_all(&lines) {
+            for quad in frame.iter() {
+                geometry.push_quad(quad);
+            }
+        }
+
+        for line in lines {
+            text_renderer.push_render_text(line);
         }
     }
 }
@@ -197,7 +225,7 @@ impl Game for SliderGame {
     fn update(
         &mut self,
         dt: f32,
-        _geometry: &mut Geometry,
+        geometry: &mut Geometry,
         text_renderer: &mut TextRenderer,
         _sound_system: &SoundSystem,
     ) {
@@ -238,7 +266,7 @@ impl Game for SliderGame {
         self.input.clear_frame();
 
         text_renderer.reset();
-        self.draw_text(text_renderer);
+        self.draw_text(geometry, text_renderer);
     }
 
     fn draw(&mut self, scene: &mut Scene, camera: &mut Camera) {
