@@ -57,9 +57,13 @@ impl SliderGame {
     /// the ring at three hundred is hanging ahead.
     const FLOWN_FOR: f32 = 12.3;
 
-    pub fn new() -> Self {
+    /// `staged` rather than a call to `crate::staged()`, so that a picture
+    /// test can ask for the photographed state without putting
+    /// `--screenshot` in its own arguments. `main` passes what the
+    /// arguments say.
+    pub fn new(staged: bool) -> Self {
         Self {
-            staged: crate::staged(),
+            staged,
             flown: 0.0,
             run: Run::new(),
             ship: Ship::new(),
@@ -169,7 +173,7 @@ impl SliderGame {
 
 impl Default for SliderGame {
     fn default() -> Self {
-        Self::new()
+        Self::new(false)
     }
 }
 
@@ -326,5 +330,51 @@ impl Game for SliderGame {
         if !focus {
             self.want_cursor_locked = false;
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// How big the picture is: the engine's own size, said once there and
+    /// read here, per its spec 0062.
+    const WIDE: u32 = blitzkit::picture::SIZE.0;
+    const TALL: u32 = blitzkit::picture::SIZE.1;
+
+    /// The tunnel from inside it, held against a picture of it. Spec 0005.
+    ///
+    /// **The staging was already here.** `--screenshot` flies the ship in
+    /// for `FLOWN_FOR` seconds and then stops the clock, because the
+    /// opening frame is the mouth of the tunnel, straight and empty.
+    /// Twelve point three seconds puts it about two hundred and seventy
+    /// five metres in, where the tunnel is bending and the ring at three
+    /// hundred hangs ahead. That is the frame `refresh-screenshots`
+    /// photographs, so this holds the picture that is already on show.
+    ///
+    /// One `update` and no more, because that is what flies it in. The
+    /// staged branch runs its own fixed step until `flown` is there and
+    /// then forces `dt` to nought, so a second call would find `flown`
+    /// already set and move nothing.
+    #[test]
+    fn the_tunnel_from_inside_looks_right() {
+        let reference = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("tests/pictures/inside-the-tunnel.png");
+
+        blitzkit::picture::drawn_looks_right(&reference, (WIDE, TALL), |renderer| {
+            let mut game = SliderGame::new(true);
+            let mut geometry = Geometry::new();
+            let mut text = TextRenderer::new();
+            let sound = SoundSystem::new();
+            let mut scene = Scene::new();
+            let mut camera = Camera::new();
+
+            game.load(renderer);
+            game.initialize(&mut geometry, &mut text, &sound, (WIDE as f32, TALL as f32));
+            game.update(0.0, &mut geometry, &mut text, &sound);
+            game.draw(&mut scene, &mut camera);
+
+            (scene, camera)
+        });
     }
 }

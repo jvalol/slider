@@ -12,6 +12,7 @@ not a priority, and it never changes once a spec exists.
 | [0002](0002-the-ship.md) | Steering by mouse, and being held in |
 | [0003](0003-rings.md) | Where to steer to, and threading them |
 | [0004](0004-the-run.md) | The number at the end, and flying it again |
+| [0005](0005-a-picture-of-the-tunnel-from-inside.md) | The staged view from inside the tunnel held against a picture of it, through the engine's harness |
 
 The tunnel shares its shape and its numbers with blitzkit's `tunnel` example.
 Neither repo can see the other, so `check-tunnel` in the project folder is the
